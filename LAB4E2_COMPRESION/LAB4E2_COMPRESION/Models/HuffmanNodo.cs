@@ -10,6 +10,16 @@ namespace LAB4E2_COMPRESION.Models
         public HuffmanNodo NodoDerecho { get; set; }
         public HuffmanNodo NodoIzquierdo { get; set; }
         public char value { get; set; }
-        public float frecuencia { get; set; }
+        public List<string> BinaryValue { get; set; }
+        public int frecuencia { get; set; }
+        public bool Nulldata { get; set; }
+        public HuffmanNodo(char id,HuffmanNodo HDerecho, HuffmanNodo HIzquierdo, int f, bool data) {
+            value = id;
+            NodoDerecho = HDerecho;
+            NodoIzquierdo = HIzquierdo;
+            frecuencia = f;
+            Nulldata = data;
+
+        }
     }
 }
