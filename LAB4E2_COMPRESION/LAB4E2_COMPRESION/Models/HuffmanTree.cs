@@ -11,23 +11,27 @@ namespace LAB4E2_COMPRESION.Models
         Dictionary<char, int> HuffmanDictionary = new Dictionary<char, int>();
         List<HuffmanNodo> ModeloHuffman;
         List<HuffmanNodo> Registro = new List<HuffmanNodo>();
+        string fichero = null;
         int n = 0;
+        /* metodo de lectura de archivo
+         * entrada = archivo txt
+         * salida = char list
+         */
         public void Lectura()
         {
-            string fichero = "";
             string contenido = string.Empty;
             try
             {
                 using (StreamReader lector = new StreamReader(fichero))
                 {
-                    while (lector.Peek()>-1)
+                    while (lector.Peek() > -1)
                     {
                         string linea = lector.ReadLine();
                         if (!String.IsNullOrEmpty(linea))
                         {
-                            
+
                             for (int i = 0; i < linea.Length; i++)
-                                
+
                                 for (int j = 0; j < HuffmanDictionary.Count; j++)
                                 {
                                     if (HuffmanDictionary.TryGetValue(linea[i], out int contador))
@@ -50,56 +54,74 @@ namespace LAB4E2_COMPRESION.Models
                 throw;
             }
         }
-        public void InsertarDiccionario() 
+        public void InsertarDiccionario()
         {
-            foreach (KeyValuePair<char,int> result in HuffmanDictionary)
+            Lectura();
+            foreach (KeyValuePair<char, int> result in HuffmanDictionary)
             {
                 HuffmanNodo aux;
                 HuffmanNodo NuevoNodo = new HuffmanNodo(result.Key, null, null, result.Value, true);
                 Registro.Add(NuevoNodo);
-                for (int i = Registro.Count; i >0 ; i--)
+                for (int i = Registro.Count-1; i > 0; i--)
                 {
                     if (comparador(Registro[i], NuevoNodo))
                     {
-                        aux = Registro[i-1];
-                        Registro[i-1] = NuevoNodo;
+                        aux = Registro[i - 1];
+                        Registro[i - 1] = NuevoNodo;
                         Registro[i] = aux;
 
                     }
-                    
                 }
             }
         }
         public void InsertarRegistro(HuffmanNodo data) {
             HuffmanNodo aux;
             Registro.Add(data);
-            for (int i = Registro.Count; i > 0; i--)
+            for (int i = ModeloHuffman.Count; i > 0; i--)
             {
-                if (comparador(Registro[i], data))
+                if (comparador(ModeloHuffman[i], data))
                 {
-                    aux = Registro[i - 1];
-                    Registro[i - 1] = data;
-                    Registro[i] = aux;
+                    aux = ModeloHuffman[i - 1];
+                    ModeloHuffman[i - 1] = data;
+                    ModeloHuffman[i] = aux;
                 }
 
             }
         }
-        public void pseudoarbol() 
+        public void pseudoarbol(string archivo)
         {
+            fichero = archivo;
             InsertarDiccionario();
             int i = 0;
             ModeloHuffman = new List<HuffmanNodo>(Registro);
-            while (ModeloHuffman.Count !=1)
+            while (ModeloHuffman.Count != 1)
             {
                 HuffmanNodo temp = new HuffmanNodo(Convert.ToChar(i),
-                    ModeloHuffman[0], ModeloHuffman[0], ModeloHuffman[1].frecuencia+ModeloHuffman[1].frecuencia, false );
+                    ModeloHuffman[0], ModeloHuffman[1], ModeloHuffman[0].frecuencia + ModeloHuffman[1].frecuencia, false);
                 InsertarRegistro(temp);
                 ModeloHuffman.RemoveAt(0);
                 ModeloHuffman.RemoveAt(1);
                 i++;
+                Registro.Add(temp);
+            }
+            MetodoRegistros();
+        }
+        public void MetodoRegistros() 
+        {
+            for(int i= Registro.Count-1 ; i>0 ; i--)  
+            {
+                HuffmanNodo aux = Registro[i];
+                if (!aux.Nulldata)
+                {
+                    aux.NodoDerecho.BinaryValue = (aux.BinaryValue);
+                    aux.NodoDerecho.BinaryValue.Add("1");
+                    aux.NodoIzquierdo.BinaryValue = (aux.BinaryValue);
+                    aux.NodoIzquierdo.BinaryValue.Add("0");
+                    Registro.RemoveAt(i);
+                }
             }
         }
-        public bool comparador(HuffmanNodo valor1, HuffmanNodo valor2) 
+        public bool comparador(HuffmanNodo valor1, HuffmanNodo valor2)
         {
             if (valor1.frecuencia > valor2.frecuencia)
             {
@@ -110,5 +132,6 @@ namespace LAB4E2_COMPRESION.Models
                 return false;
             }
         }
+
     }
 }
