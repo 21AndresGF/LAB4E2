@@ -56,8 +56,9 @@ namespace LAB4E2_COMPRESION.Models
                 throw;
             }
         }
-        public void InsertarDiccionario()
+        public void InsertarDiccionario(string archivo)
         {
+            fichero = archivo;
             Lectura();
             foreach (KeyValuePair<char, int> result in HuffmanDictionary)
             {
@@ -66,13 +67,17 @@ namespace LAB4E2_COMPRESION.Models
                 Registro.Add(NuevoNodo);
                 for (int i = Registro.Count-1; i > 0; i--)
                 {
-                    if (comparador(Registro[i], NuevoNodo))
+                    if (i > 0)
                     {
-                        aux = Registro[i - 1];
-                        Registro[i - 1] = NuevoNodo;
-                        Registro[i] = aux;
+                        if (Registro[i].frecuencia > NuevoNodo.frecuencia)
+                        {
+                            aux = Registro[i - 1];
+                            Registro[i - 1] = NuevoNodo;
+                            Registro[i] = aux;
 
+                        }
                     }
+
                 }
             }
         }
@@ -81,19 +86,20 @@ namespace LAB4E2_COMPRESION.Models
             Registro.Add(data);
             for (int i = ModeloHuffman.Count; i > 0; i--)
             {
-                if (comparador(ModeloHuffman[i], data))
+                if (i > 0)
                 {
-                    aux = ModeloHuffman[i - 1];
-                    ModeloHuffman[i - 1] = data;
-                    ModeloHuffman[i] = aux;
-                }
+                    if (ModeloHuffman[i].frecuencia > data.frecuencia)
+                    {
+                        aux = ModeloHuffman[i - 1];
+                        ModeloHuffman[i - 1] = data;
+                        ModeloHuffman[i] = aux;
 
+                    }
+                }
             }
         }
-        public void pseudoarbol(string archivo)
+        public void pseudoarbol()
         {
-            fichero = archivo;
-            InsertarDiccionario();
             int i = 0;
             ModeloHuffman = new List<HuffmanNodo>(Registro);
             while (ModeloHuffman.Count != 1)
@@ -122,17 +128,5 @@ namespace LAB4E2_COMPRESION.Models
                 }
             }
         }
-        public bool comparador(HuffmanNodo valor1, HuffmanNodo valor2)
-        {
-            if (valor1.frecuencia > valor2.frecuencia)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-
     }
 }
