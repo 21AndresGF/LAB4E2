@@ -10,7 +10,7 @@ namespace LAB4E2_COMPRESION.Models
         public HuffmanNodo NodoDerecho { get; set; }
         public HuffmanNodo NodoIzquierdo { get; set; }
         public char value { get; set; }
-        public List<string> BinaryValue { get; set; }
+        public string BinaryValue { get; set; }
         public int frecuencia { get; set; }
         //valor bandera si es parte de diccionario
         public bool Nulldata { get; set; }
