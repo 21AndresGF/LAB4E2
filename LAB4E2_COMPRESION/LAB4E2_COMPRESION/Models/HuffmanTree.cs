@@ -65,19 +65,18 @@ namespace LAB4E2_COMPRESION.Models
                 HuffmanNodo aux;
                 HuffmanNodo NuevoNodo = new HuffmanNodo(result.Key, null, null, result.Value, true);
                 Registro.Add(NuevoNodo);
-                for (int i = Registro.Count-1; i > 0; i--)
+                for (int x = Registro.Count - 1; x >= 0; x--)
                 {
-                    if (i > 0)
+                    if (x > 0)
                     {
-                        if (Registro[i].frecuencia > NuevoNodo.frecuencia)
+                        if (Registro[x - 1].frecuencia > NuevoNodo.frecuencia)
                         {
-                            aux = Registro[i - 1];
-                            Registro[i - 1] = NuevoNodo;
-                            Registro[i] = aux;
+                            aux = Registro[x - 1];
+                            Registro[x - 1] = NuevoNodo;
+                            Registro[x] = aux;
 
                         }
                     }
-
                 }
             }
         }
@@ -106,11 +105,26 @@ namespace LAB4E2_COMPRESION.Models
             {
                 HuffmanNodo temp = new HuffmanNodo(Convert.ToChar(i),
                     ModeloHuffman[0], ModeloHuffman[1], ModeloHuffman[0].frecuencia + ModeloHuffman[1].frecuencia, false);
-                InsertarRegistro(temp);
+                HuffmanNodo aux;
+                Registro.Add(temp);
+                for (int j = ModeloHuffman.Count - 1; j >= 0; j--)
+                {
+                    if (j > 0)
+                    {
+                        if (ModeloHuffman[j - 1].frecuencia > temp.frecuencia)
+                        {
+                            aux = ModeloHuffman[j - 1];
+                            ModeloHuffman[j - 1] = temp;
+                            ModeloHuffman[j] = aux;
+
+                        }
+                    }
+                }
                 ModeloHuffman.RemoveAt(0);
-                ModeloHuffman.RemoveAt(1);
+                ModeloHuffman.RemoveAt(0);
                 i++;
                 Registro.Add(temp);
+
             }
             MetodoRegistros();
         }
