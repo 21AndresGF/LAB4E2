@@ -9,6 +9,7 @@ namespace LAB4E2_COMPRESION.Models
 {
     public class HuffmanTree
     {
+
         Dictionary<char, int> HuffmanDictionary = new Dictionary<char, int>();
         Dictionary<char, string> valoresBinarios = new Dictionary<char, string>();
         List<HuffmanNodo> ModeloHuffman;
@@ -19,13 +20,14 @@ namespace LAB4E2_COMPRESION.Models
         List<int> binarios = new List<int>();
         string conversion = null;
         string fichero = null;
-        int n = 0;
+
         /* metodo de lectura de archivo
          * entrada = archivo txt
          * salida = char list
          */
-        public void Lectura()
+        public void Lectura(string archivo)
         {
+            fichero = archivo;
             string contenido = string.Empty;
             try
             {
@@ -63,45 +65,49 @@ namespace LAB4E2_COMPRESION.Models
                 throw;
             }
         }
+
+        //metodo de insercion en el diccionario del archivo original
         public void InsertarDiccionario(string archivo)
         {
-            fichero = archivo;
-            Lectura();
             foreach (KeyValuePair<char, int> result in HuffmanDictionary)
             {
                 Registro.Add(new HuffmanNodo(result.Key, null, null, result.Value, true));
                 HuffmanNodo aux = Registro[Registro.Count - 1];
-                for (int x = Registro.Count - 1; x >= 0; x--)
+                for (int i = Registro.Count - 1; i >= 0; i--)
                 {
-                    if (x > 0)
+                    if (i > 0)
                     {
-                        if (Registro[x - 1].frecuencia > Registro[x].frecuencia)
+                        if (Registro[i - 1].frecuencia > Registro[i].frecuencia)
                         {
-                            aux = Registro[x - 1];
-                            Registro[x - 1] = Registro[x];
-                            Registro[x] = aux;
+                            aux = Registro[i - 1];
+                            Registro[i - 1] = Registro[i];
+                            Registro[i] = aux;
 
                         }
                     }
                 }
             }
         }
+
+        //metodo de ordenamiento en el modelo huffman luego de la creacion de nodos vacios
         public void InsertarRegistro() {
             HuffmanNodo aux;
-            for (int j = ModeloHuffman.Count - 1; j >= 0; j--)
+            for (int i = ModeloHuffman.Count - 1; i >= 0; i--)
             {
-                if (j > 0)
+                if (i > 0)
                 {
-                    if (ModeloHuffman[j - 1].frecuencia > ModeloHuffman[j].frecuencia)
+                    if (ModeloHuffman[i - 1].frecuencia > ModeloHuffman[i].frecuencia)
                     {
-                        aux = ModeloHuffman[j - 1];
-                        ModeloHuffman[j - 1] = ModeloHuffman[j];
-                        ModeloHuffman[j] = aux;
+                        aux = ModeloHuffman[i - 1];
+                        ModeloHuffman[i - 1] = ModeloHuffman[i];
+                        ModeloHuffman[i] = aux;
 
                     }
                 }
             }
         }
+
+        //metodo que crea los nodos vacios del modelo de compresion de huffman
         public void pseudoarbol()
         {
             ModeloHuffman = new List<HuffmanNodo>(Registro);
@@ -117,31 +123,33 @@ namespace LAB4E2_COMPRESION.Models
                 i++;
             }
         }
+        // metodo el cual asigna un valor al hijo derecho e izquierdo de los nodos en el modelo huffman
         public void MetodoRegistros() 
         {
-            for (int t = Registro.Count - 1; t >= 0; t--)
+            for (int i = Registro.Count - 1; i >= 0; i--)
             {
-                if (!Registro[t].Nulldata)
+                if (!Registro[i].Nulldata)
                 {
-                    if (Registro[t].BinaryValue == null)
+                    if (Registro[i].BinaryValue == null)
                     {
-                        Registro[t].NodoDerecho.BinaryValue = "1";
-                        Registro[t].NodoIzquierdo.BinaryValue = "0";
+                        Registro[i].NodoDerecho.BinaryValue = "1";
+                        Registro[i].NodoIzquierdo.BinaryValue = "0";
                     }
                     else
                     {
-                        Registro[t].NodoDerecho.BinaryValue = Registro[t].BinaryValue + "1";
-                        Registro[t].NodoIzquierdo.BinaryValue = Registro[t].BinaryValue + "0";
+                        Registro[i].NodoDerecho.BinaryValue = Registro[i].BinaryValue + "1";
+                        Registro[i].NodoIzquierdo.BinaryValue = Registro[i].BinaryValue + "0";
                     }
                 }
             }
-                int i = 0;
-                while (Registro[i].Nulldata)
+                int j = 0;
+                while (Registro[j].Nulldata)
                 {
-                    valoresBinarios.Add(Registro[i].value, Registro[i].BinaryValue);
-                    i++;
+                    valoresBinarios.Add(Registro[j].value, Registro[j].BinaryValue);
+                    j++;
                 }
         }
+        //metodo el cual hace lectura de archivo para cambiarlo con su valor binario ascii
         public void ConversionLectura() 
         {
             using (StreamReader lector2 = new StreamReader(fichero))
@@ -166,6 +174,7 @@ namespace LAB4E2_COMPRESION.Models
                 }
             }
         }
+        // metodo el cual separa los valoros de 8 bits
         public void separador() 
         {
             bool bandera2 = true;
@@ -190,31 +199,34 @@ namespace LAB4E2_COMPRESION.Models
 
                 }
             }
-
+            CBinarioDecimal();
+        }
+        public void CBinarioDecimal() 
+        {
             for (int i = 0; i < subs.Count; i++)
             {
                 double calculo = 0;
-                for (int x = 0; x < subs[i].Length; x++)
+                for (int j = 0; j < subs[i].Length; j++)
                 {
                     string str = subs[i];
-                    if (str[x].Equals('1'))
+                    if (str[j].Equals('1'))
                     {
-                        double calculo2 = Math.Pow(2, (str.Length - 1) - x);
+                        double calculo2 = Math.Pow(2, (str.Length - 1) - j);
                         calculo += calculo2;
                     }
                 }
                 binarios.Add(Convert.ToInt32(calculo));
             }
-
         }
-        public void escribir() 
+        public string escribir() 
         {
             string datos = null; ;
-            for (int p = 0; p < binarios.Count; p++)
+            for (int i = 0; i < binarios.Count; i++)
             {
-                char c = Convert.ToChar(binarios[p]);
+                char c = Convert.ToChar(binarios[i]);
                 datos += c;
             }
+            return datos;
         }
 
     }
