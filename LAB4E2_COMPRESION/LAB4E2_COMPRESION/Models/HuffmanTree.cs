@@ -15,6 +15,7 @@ namespace LAB4E2_COMPRESION.Models
         List<HuffmanNodo> ModeloHuffman;
         List<HuffmanNodo> Registro = new List<HuffmanNodo>();
         List<HuffmanNodo> Conversiones = new List<HuffmanNodo>();
+        List<string> bins = new List<string>();
         List<ASCIIEncoding> subStrings = new List<ASCIIEncoding>();
         List<string> subs = new List<string>();
         List<int> binarios = new List<int>();
@@ -25,7 +26,17 @@ namespace LAB4E2_COMPRESION.Models
          * entrada = archivo txt
          * salida = char list
          */
-        public void Lectura(string archivo)
+        public void Compresion(string ruta, string salida)
+        {
+            InsertarDiccionario();
+            pseudoarbol();
+            MetodoRegistros();
+            separador();
+            CBinarioDecimal();
+            escribir(ruta, salida);
+
+        }
+        public void LecturaArchivo(string archivo)
         {
             fichero = archivo;
             string contenido = string.Empty;
@@ -38,7 +49,7 @@ namespace LAB4E2_COMPRESION.Models
                         string linea = lector.ReadLine();
                         if (!String.IsNullOrEmpty(linea))
                         {
-                            for (int i = 0; i < linea.Length; i++) 
+                            for (int i = 0; i < linea.Length; i++)
                             {
                                 bool bandera = false;
                                 if (HuffmanDictionary.ContainsKey(linea[i]))
@@ -55,7 +66,7 @@ namespace LAB4E2_COMPRESION.Models
                                 {
                                     HuffmanDictionary.Add(linea[i], 1);
                                 }
-                            }    
+                            }
                         }
                     }
                 }
@@ -67,7 +78,7 @@ namespace LAB4E2_COMPRESION.Models
         }
 
         //metodo de insercion en el diccionario del archivo original
-        public void InsertarDiccionario(string archivo)
+        public void InsertarDiccionario()
         {
             foreach (KeyValuePair<char, int> result in HuffmanDictionary)
             {
@@ -124,7 +135,7 @@ namespace LAB4E2_COMPRESION.Models
             }
         }
         // metodo el cual asigna un valor al hijo derecho e izquierdo de los nodos en el modelo huffman
-        public void MetodoRegistros() 
+        public void MetodoRegistros()
         {
             for (int i = Registro.Count - 1; i >= 0; i--)
             {
@@ -142,15 +153,15 @@ namespace LAB4E2_COMPRESION.Models
                     }
                 }
             }
-                int j = 0;
-                while (Registro[j].Nulldata)
-                {
-                    valoresBinarios.Add(Registro[j].value, Registro[j].BinaryValue);
-                    j++;
-                }
+            int j = 0;
+            while (Registro[j].Nulldata)
+            {
+                valoresBinarios.Add(Registro[j].value, Registro[j].BinaryValue);
+                j++;
+            }
         }
         //metodo el cual hace lectura de archivo para cambiarlo con su valor binario ascii
-        public void ConversionLectura() 
+        public void ConversionLectura()
         {
             using (StreamReader lector2 = new StreamReader(fichero))
             {
@@ -175,7 +186,7 @@ namespace LAB4E2_COMPRESION.Models
             }
         }
         // metodo el cual separa los valoros de 8 bits
-        public void separador() 
+        public void separador()
         {
             bool bandera2 = true;
             while (conversion.Length != 0)
@@ -201,7 +212,7 @@ namespace LAB4E2_COMPRESION.Models
             }
             CBinarioDecimal();
         }
-        public void CBinarioDecimal() 
+        public void CBinarioDecimal()
         {
             for (int i = 0; i < subs.Count; i++)
             {
@@ -218,7 +229,8 @@ namespace LAB4E2_COMPRESION.Models
                 binarios.Add(Convert.ToInt32(calculo));
             }
         }
-        public string escribir() 
+
+        public void escribir(string nombreFichero, string salida)
         {
             string datos = null; ;
             for (int i = 0; i < binarios.Count; i++)
@@ -226,8 +238,113 @@ namespace LAB4E2_COMPRESION.Models
                 char c = Convert.ToChar(binarios[i]);
                 datos += c;
             }
-            return datos;
-        }
 
+            if (!File.Exists(nombreFichero))
+            {
+                StreamWriter fich = new StreamWriter(nombreFichero);
+                fich.Write(datos);
+                fich.Close();
+            }
+            if (!File.Exists(salida))
+            {
+                StreamWriter writer = new StreamWriter(salida);
+                foreach (KeyValuePair<char, int> item in HuffmanDictionary)
+                {
+                    writer.WriteLine(item);
+                }
+
+                writer.Close();
+            }
+        }
+        //metodo de lectura del archivo compresionado salida binario del caracter
+        public void lecturaDescompresionSalida(string salida)
+        {
+            fichero = salida;
+            string contenido = string.Empty;
+            try
+            {
+                using (StreamReader lector = new StreamReader(salida))
+                {
+                    while (lector.Peek() > -1)
+                    {
+                        string linea = lector.ReadLine();
+                        if (!String.IsNullOrEmpty(linea))
+                        {
+                            for (int i = 0; i < linea.Length; i++)
+                            {
+                                int bin = Convert.ToSByte(linea[i]);
+                                string cadena = null;
+                                while (true)
+                                {
+                                    if ((bin % 2) != 0)
+                                    {
+                                        cadena += 1;
+                                    }
+                                    else
+                                    {
+                                        cadena += 0 + cadena;
+                                    }
+                                    bin = bin / 2;
+                                    if (bin <= 0)
+                                    {
+                                        for (int am = 0; am < cadena.Length; am++)
+                                        {
+
+                                        }
+                                        bins.Add(cadena);
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+        public void lecturaDiccionario(string diccionario) 
+        {
+            fichero = diccionario;
+            string contenido = string.Empty;
+            try
+            {
+                using (StreamReader lector = new StreamReader(diccionario))
+                {
+                    while (lector.Peek() > -1)
+                    {
+                        string linea = lector.ReadLine();
+                        if (!String.IsNullOrEmpty(linea))
+                        {
+                            for (int i = 0; i < linea.Length; i++)
+                            {
+                                bool bandera = false;
+                                if (HuffmanDictionary.ContainsKey(linea[i]))
+                                {
+                                    bandera = true;
+                                }
+                                if (bandera)
+                                {
+                                    int n = HuffmanDictionary[linea[i]];
+                                    n++;
+                                    HuffmanDictionary[linea[i]] = n;
+                                }
+                                else
+                                {
+                                    HuffmanDictionary.Add(linea[i], 1);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        } 
+        public void descompresion() { }
     }
 }
