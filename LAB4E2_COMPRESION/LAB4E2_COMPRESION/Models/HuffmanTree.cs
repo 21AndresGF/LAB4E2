@@ -318,24 +318,7 @@ namespace LAB4E2_COMPRESION.Models
                         string linea = lector.ReadLine();
                         if (!String.IsNullOrEmpty(linea))
                         {
-                            for (int i = 0; i < linea.Length; i++)
-                            {
-                                bool bandera = false;
-                                if (HuffmanDictionary.ContainsKey(linea[i]))
-                                {
-                                    bandera = true;
-                                }
-                                if (bandera)
-                                {
-                                    int n = HuffmanDictionary[linea[i]];
-                                    n++;
-                                    HuffmanDictionary[linea[i]] = n;
-                                }
-                                else
-                                {
-                                    HuffmanDictionary.Add(linea[i], 1);
-                                }
-                            }
+                            valoresBinarios.Add(linea[0], linea.Substring(1, linea.Length));
                         }
                     }
                 }
